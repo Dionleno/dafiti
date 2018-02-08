@@ -9,91 +9,81 @@ use Illuminate\Support\Facades\Validator;
 
 class BeersController extends Controller
 {
+
+    public function __construct(){
+        $this->client = new Client();
+        $this->response = new ResponseResource();
+    }
     /**
      * Create a new controller instance.
      *
      * @return void
      */
 
-    public function teste(){
-
-        $client = new Client();
-        $response = new ResponseResource();
-
+    public function index(){
+ 
         try{
             
-            $res = $client->request('GET', 'https://api.punkapi.com/v2/beers');
-            return $response->ResponseStatusSuccess(json_decode($res->getBody(), true));
+            $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers');
+            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true));
 
         }catch(ClientException $e){
-
-            $res = $e->getResponse();
-            $statusCode = $res->getStatusCode();
-            if($statusCode == '404'){
-                return $response->notFoundResponse();
-            }else{
-                throw $e;                
-            }
+            return $this->ReturnFailsRequest($e);
         }
         
     }
 
-    public function paginate($page, $totalPage){
-        $itens = [
-            'page'=> $page,
-            'totalPage'=> $totalPage
-        ];
+    public function paginate(Request $request ,$page, $totalPage){
+        $request['page'] = $page;
+        $request['totalPage'] = $totalPage;
 
-        $client = new Client();
-        $response = new ResponseResource();
-
+        $this->validate($request, [
+            'page' => ['required','numeric'] 
+        ]);
+       
+        $totalPage = $totalPage || 20;
+         
         try{
             
-            $res = $client->request('GET', 'https://api.punkapi.com/v2/beers?page='.$page.'&per_page='.$totalPage);
-            return $response->ResponseStatusSuccess(json_decode($res->getBody(), true));
+            $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?page='.$page.'&per_page='.$totalPage);
+            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true));
 
         }catch(ClientException $e){
-
-            $res = $e->getResponse();
-            $statusCode = $res->getStatusCode();
-            if($statusCode == '404'){
-                return $response->notFoundResponse();
-            }else{
-                throw $e;                
-            }
+            return $this->ReturnFailsRequest($e);
         }
     }
 
-    public function filter($tag, $filter){
+    public function filter(Request $request , $tag, $filter){
+        $request['tag'] = $tag;
+        $request['filter'] = $filter;
 
-      
-
-        $client = new Client();
-        $response = new ResponseResource();
+        $this->validate($request, [
+            'tag' => ['required'],
+            'filter' => ['required']
+        ]);
+        
+       
 
         try{
             
-            $res = $client->request('GET', 'https://api.punkapi.com/v2/beers?'.$tag.'='.$filter);
-            return $response->ResponseStatusSuccess(json_decode($res->getBody(), true));
+            $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?'.$tag.'='.$filter);
+            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true));
 
         }catch(ClientException $e){
-
-            $res = $e->getResponse();
-            $statusCode = $res->getStatusCode();
-            if($statusCode == '404'){
-                return $response->notFoundResponse();
-            }else{
-                throw $e;                
-            }
+            return $this->ReturnFailsRequest($e);
         }
         
         
         
-    }
-
-
-    private function validateTags($tags){
-
     }
     
+    private function ReturnFailsRequest(ClientException $e){
+        $res = $e->getResponse();
+        $statusCode = $res->getStatusCode();
+        if($statusCode == '404'){
+            return $this->response->notFoundResponse();
+        }else{
+            throw $e;                
+        }
+    }
 }
