@@ -9,23 +9,27 @@ use Illuminate\Support\Facades\Validator;
 
 class BeersController extends Controller
 {
-
+    /**
+     * @__construct
+     *  Instanciar bibliotecas GuzzleHttp e ResponseResource 
+     *  que retorna o status do Request
+     */
     public function __construct(){
         $this->client = new Client();
         $this->response = new ResponseResource();
     }
+
     /**
-     * Create a new controller instance.
-     *
+     * @index 
+     * Listar todas as cervejas 
      * @return void
      */
-
     public function index(){
  
         try{
             
             $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers');
-            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true));
+            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true),$res->getStatusCode());
 
         }catch(ClientException $e){
             return $this->ReturnFailsRequest($e);
@@ -33,6 +37,11 @@ class BeersController extends Controller
         
     }
 
+    /**
+     * @paginate
+     * @page -> a pagina a ser buscada
+     * @TotalPage -> Numero de itens por pagina
+     */
     public function paginate(Request $request ,$page, $totalPage){
         $request['page'] = $page;
         $request['totalPage'] = $totalPage;
@@ -46,28 +55,28 @@ class BeersController extends Controller
         try{
             
             $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?page='.$page.'&per_page='.$totalPage);
-            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true));
+            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true),$res->getStatusCode());
 
         }catch(ClientException $e){
             return $this->ReturnFailsRequest($e);
         }
     }
 
-    public function filter(Request $request , $tag, $filter){
-        $request['tag'] = $tag;
-        $request['filter'] = $filter;
-
-        $this->validate($request, [
-            'tag' => ['required'],
-            'filter' => ['required']
-        ]);
-        
+    /**
+     * @filter
+     * @tag -> tipo de filtro a ser aplicado (abv_gt, abv_lt, ibu_gt, ibu_lt, ebc_gt, ebc_lt, beer_name)
+     * @filter -> o valor do filtro
+     */
+    public function filter(Request $request){
+         
        
-
         try{
+
+            //remover parametros null e vazio
+            $filter = array_filter($request->input());
             
-            $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?'.$tag.'='.$filter);
-            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true));
+            $res = $this->client->request('GET', 'https://api.punkapi.com/v2/beers?'.http_build_query($filter));
+            return $this->response->ResponseStatusSuccess(json_decode($res->getBody(), true),$res->getStatusCode());
 
         }catch(ClientException $e){
             return $this->ReturnFailsRequest($e);
@@ -77,13 +86,23 @@ class BeersController extends Controller
         
     }
     
+    /**
+     * @ReturnFailsRequest
+     * @e -> ClientException 
+     * Essa função trata os erros que será retornado da requição
+     */
     private function ReturnFailsRequest(ClientException $e){
         $res = $e->getResponse();
         $statusCode = $res->getStatusCode();
         if($statusCode == '404'){
             return $this->response->notFoundResponse();
+        }else if($statusCode != ''){
+            return $this->response->ResponseStatusError($res,$statusCode);
         }else{
             throw $e;                
         }
     }
+
+
+
 }

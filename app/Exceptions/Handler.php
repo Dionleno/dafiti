@@ -52,6 +52,11 @@ class Handler extends ExceptionHandler
             $response = new ResponseResource();
             return $response->notFoundResponse();
         }
+
+        if($e instanceof Exception){
+            $response = new ResponseResource();
+            return $response->ResponseStatusError('',500);
+        }
         return parent::render($request, $e);
     }
 }
