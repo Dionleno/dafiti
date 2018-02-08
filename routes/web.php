@@ -16,7 +16,9 @@ $router->get('/', function () use ($router) {
 }); 
 
 $router->group(['prefix' => 'v2'], function () use ($router) {
-    $router->get('beers','BeersController@index');
-    $router->get('beers/filter','BeersController@filter');
-    $router->get('beers/paged/{page}/{totalPage}','BeersController@paginate');
+    $router->get('beers','BeersController@index');//Get Beers
+    $router->get('beers/filter','BeersController@filter');//Parameters
+    $router->get('beer/{id}','BeersController@singlebeer');//Single Beer
+    $router->get('beers/random','BeersController@random');//Random
+    $router->get('beers/page/{page}/{totalPage}','BeersController@paginate');//Pagination
 });
