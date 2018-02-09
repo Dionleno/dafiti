@@ -25,16 +25,16 @@ php -S localhost:8000 -t public
  http://localhost:8000/v2/beers
  
  ### Aplicar filtros
- http://localhost:8000/v2/beers/filter?{tipo}={valor}&{tipo}={valor} [....] (Podem adicionar N filtros)
- Exemplo: http://localhost:8000/v2/beers/filter?ibu_gt=4&ibu_gt=2
+ http://localhost:8000/v2/beers/filter?{tipo}={valor}&{tipo}={valor} [....] (Podem adicionar N filtros) <br>
+ Exemplo: http://localhost:8000/v2/beers/filter?ibu_gt=4&ibu_gt=2 <br>
  tipo de filtro a ser aplicado (abv_gt, abv_lt, ibu_gt, ibu_lt, ebc_gt, ebc_lt, beer_name)
  
  ### Busca randomica
  http://localhost:8000/v2/beers/random
  
  ### Paginação
- http://localhost:8000/v2/beers/page/{page}/{per_page}
- Exemplo: http://localhost:8000/v2/beers/page/2/25
+ http://localhost:8000/v2/beers/page/{page}/{per_page} <br>
+ Exemplo: http://localhost:8000/v2/beers/page/2/25 <br>
  Obs: Caso a variavel per_page não for definida o default é 20 itens
  
  ### Single Beer => buscar por ID
