@@ -1,5 +1,30 @@
 # Lumen PHP Framework
 
+Projeto Api Proxy com o framework Lumen.
+
+## Instalação
+
+Baixar o repositorio:
+git clone https://github.com/Dionleno/dafiti.git
+
+## Atualizar as dependencias
+
+composer update
+
+## Rodar aplicação
+
+php -S localhost:8000 -t public
+
+## Rotas da api
+
+
+Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+
+
+
+
+# Lumen PHP Framework
+
 [![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
 [![Total Downloads](https://poser.pugx.org/laravel/lumen-framework/d/total.svg)](https://packagist.org/packages/laravel/lumen-framework)
 [![Latest Stable Version](https://poser.pugx.org/laravel/lumen-framework/v/stable.svg)](https://packagist.org/packages/laravel/lumen-framework)
